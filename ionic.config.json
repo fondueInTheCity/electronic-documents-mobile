@@ -1,0 +1,7 @@
+{
+  "name": "electronic-documents-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
