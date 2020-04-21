@@ -1,0 +1,10 @@
+<ion-content>
+    <div *ngFor="let i of members " class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">
+                <a [routerLink]="['./', i.memberId]">{{i.lastName}} {{i.firstName}} {{i.middleName}}</a>
+            </h5>
+        </div>
+    </div>
+    <ion-item (click)="presentAlertPrompt()"></ion-item>
+</ion-content>

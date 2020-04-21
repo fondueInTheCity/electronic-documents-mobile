@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+        <ion-icon routerLink="../../" name="arrow-back-outline"></ion-icon>
+        Public Organizations
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-virtual-scroll [items]="organizationsInfo" >
+        <ion-card *virtualItem="let item;">
+            <ion-card-header>
+                <ion-img src="https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"></ion-img>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-item-group>
+                    <ion-item>
+                        <ion-label>Organization Name: {{item?.name}}</ion-label>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Owner Username: {{item?.ownerUsername}}</ion-label>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Organization Type: {{item?.type}}</ion-label>
+                    </ion-item>
+                    <ion-item (click)="approveDenyJoinAlert(item.id)" slot="end">
+                        <ion-label>
+                            <a>Create Request To Organization</a>
+                        </ion-label>
+                    </ion-item>
+                </ion-item-group>
+            </ion-card-content>
+        </ion-card>
+    </ion-virtual-scroll>
+</ion-content>

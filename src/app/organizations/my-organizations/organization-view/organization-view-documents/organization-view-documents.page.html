@@ -1,0 +1,28 @@
+<ion-content>
+    <ion-progress-bar *ngIf="progress" value="{{progress * 0.01}}"></ion-progress-bar>
+
+    <ion-item>
+        <ion-label>File</ion-label>
+        <ion-input type="file" (change)="selectFile($event)"></ion-input>
+        <ion-button fill="outline" size="large" class="btn btn-success" [disabled]="!selectedFiles" (click)="upload()">
+            Upload
+        </ion-button>
+    </ion-item>
+
+    <ion-slides *ngIf="filesInfo" pager="true" [options]="slideOpts">
+        <ion-slide *ngFor="let info of documentsInfo">
+            <ion-item-group>
+                <ion-item>
+                    {{info.header}}
+                </ion-item>
+                <ion-item>
+                    <ion-virtual-scroll [items]="filesInfo[info.documentsName]">
+                        <ion-item (click)="clickFun(item)" *virtualItem="let item;">
+                            <ion-label>{{item.name}}</ion-label>
+                        </ion-item>
+                    </ion-virtual-scroll>
+                </ion-item>
+            </ion-item-group>
+        </ion-slide>
+    </ion-slides>
+</ion-content>

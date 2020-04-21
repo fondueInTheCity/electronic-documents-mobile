@@ -1,0 +1,14 @@
+ion-content {
+  --background: #1F2933;
+  --color: #C5C6C7;
+
+  ion-item-group {
+    width: 100%;
+
+    ion-label {
+      color: -webkit-link;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}

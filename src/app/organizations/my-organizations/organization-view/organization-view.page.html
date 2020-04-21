@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+        <ion-icon (click)="back()" name="arrow-back-outline"></ion-icon>
+        Organization View
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-item>
+        <ion-label>Folders</ion-label>
+        <ion-select (ionChange)="route($event)" [(ngModel)]="select" interface="action-sheet">
+            <ion-select-option (click)="route(link)" *ngFor="let link of links">{{link}}</ion-select-option>
+        </ion-select>
+    </ion-item>
+    <router-outlet></router-outlet>
+</ion-content>

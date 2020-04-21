@@ -1,0 +1,16 @@
+ion-content {
+  --background: #1F2933;
+  --color: #C5C6C7;
+
+  form {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+
+    ion-button {
+      --border-color: #66FCF1;
+      --color: #66FCF1;
+    }
+  }
+}

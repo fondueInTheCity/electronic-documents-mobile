@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+        <ion-icon routerLink="/dashboard" name="arrow-back-outline"></ion-icon>
+        Documents
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ul *ngIf="documentsInfo">
+        <li *ngFor="let i of documentsInfo">
+            <a [routerLink]="['./', i.id]">{{i.name}}</a>
+        </li>
+    </ul>
+</ion-content>

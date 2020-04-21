@@ -1,0 +1,12 @@
+<ion-content>
+    <ion-item-group >
+        <ion-item>
+            <ion-virtual-scroll *ngIf="requests?.length > 0" [items]="requests">
+                <ion-item (click)="openOffer(item)" *virtualItem="let item;">
+                    <ion-label>{{item.ownerUsername}}</ion-label>
+                </ion-item>
+            </ion-virtual-scroll>
+            <ion-label *ngIf="requests?.length == 0">Nothing requests</ion-label>
+        </ion-item>
+    </ion-item-group>
+</ion-content>

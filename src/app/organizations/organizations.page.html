@@ -1,0 +1,43 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>
+            <ion-icon routerLink="/dashboard" name="arrow-back-outline"></ion-icon>
+            Organizations
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+        <ion-item routerLink="create">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            <ion-label>
+                Create Organization
+            </ion-label>
+        </ion-item>
+        <ion-item routerLink="my-organizations">
+            <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+            <ion-label>
+                My Organizations
+            </ion-label>
+        </ion-item>
+        <ion-item routerLink="join-to-organization">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            <ion-label>
+                Join To Private Organization
+            </ion-label>
+        </ion-item>
+        <ion-item routerLink="public-organizations">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            <ion-label>
+                Public Organizations
+            </ion-label>
+        </ion-item>
+<!--        <ion-item>-->
+<!--            <a [routerLink]="'join'" class="list-group-item">Join Organization</a>-->
+<!--        </ion-item>-->
+<!--        <ion-item>-->
+<!--            <a [routerLink]="'offers'" class="list-group-item">Offers of Organizations</a>-->
+<!--        </ion-item>-->
+    </ion-list>
+</ion-content>

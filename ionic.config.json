@@ -1,7 +1,8 @@
 {
   "name": "electronic-documents-mobile",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }
