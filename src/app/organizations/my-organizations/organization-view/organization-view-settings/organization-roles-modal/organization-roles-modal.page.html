@@ -1,9 +1,19 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>organization-roles-modal</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>
+            <ion-icon (click)="back()" name="arrow-back-outline"></ion-icon>
+            Organization Roles
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <ion-item-group>
+        <ion-virtual-scroll [items]="organizationRoles">
+            <ion-item (click)="presentActionSheet(item)" *virtualItem="let item;">
+                <ion-label>{{item.name}}</ion-label>
+            </ion-item>
+        </ion-virtual-scroll>
+        <ion-item (click)="createOrganizationRoleAlert()">New Role</ion-item>
+    </ion-item-group>
 </ion-content>

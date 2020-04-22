@@ -8,6 +8,7 @@ import {OrganizationViewSettingsPageRoutingModule} from './organization-view-set
 
 import {OrganizationViewSettingsPage} from './organization-view-settings.page';
 import {OrganizationRolesModalPageModule} from './organization-roles-modal/organization-roles-modal.module';
+import {OrganizationRolesModalPage} from './organization-roles-modal/organization-roles-modal.page';
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import {OrganizationRolesModalPageModule} from './organization-roles-modal/organ
         OrganizationViewSettingsPageRoutingModule,
         OrganizationRolesModalPageModule
     ],
-    declarations: [OrganizationViewSettingsPage]
+    declarations: [OrganizationViewSettingsPage],
+    entryComponents: [OrganizationRolesModalPage]
 })
 export class OrganizationViewSettingsPageModule {
 }

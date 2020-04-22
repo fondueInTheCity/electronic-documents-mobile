@@ -4,8 +4,10 @@ import {OrganizationMember} from '../../../../models/organization/organization-m
 import {ActivatedRoute} from '@angular/router';
 import {OrganizationService} from '../../../../services/organization.service';
 import {PropertiesService} from '../../../../services/properties.service';
-import {AlertController} from '@ionic/angular';
+import {AlertController, ModalController} from '@ionic/angular';
 import {loadingController} from '@ionic/core';
+import {OrganizationRolesModalPage} from '../organization-view-settings/organization-roles-modal/organization-roles-modal.page';
+import {MemberViewPage} from './member-view/member-view.page';
 
 @Component({
     selector: 'app-organization-view-members',
@@ -19,7 +21,8 @@ export class OrganizationViewMembersPage implements OnInit, OnDestroy {
     constructor(private activatedRoute: ActivatedRoute,
                 private organizationService: OrganizationService,
                 private properties: PropertiesService,
-                private alertController: AlertController) {
+                private alertController: AlertController,
+                private modalController: ModalController) {
     }
 
     async ngOnInit() {
@@ -43,6 +46,17 @@ export class OrganizationViewMembersPage implements OnInit, OnDestroy {
                     });
                     await alert.present();
                 });
+    }
+
+    async presentRolesModal(userId: number) {
+        const modal = await this.modalController.create({
+            component: MemberViewPage,
+            componentProps: {
+                organizationId: this.properties.getCurrentOrganizationId(),
+                memberId: userId
+            }
+        });
+        return await modal.present();
     }
 
     ngOnDestroy(): void {

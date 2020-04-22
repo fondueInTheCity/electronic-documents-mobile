@@ -1,10 +1,21 @@
 <ion-content>
-    <div *ngFor="let i of members " class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">
-                <a [routerLink]="['./', i.memberId]">{{i.lastName}} {{i.firstName}} {{i.middleName}}</a>
-            </h5>
-        </div>
-    </div>
-    <ion-item (click)="presentAlertPrompt()"></ion-item>
+    <ion-virtual-scroll [items]="members" >
+        <ion-card *virtualItem="let item;">
+            <ion-card-header>
+                <ion-img src="https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"></ion-img>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-item-group>
+                    <ion-item>
+                        <ion-label>Full Name: {{item.lastName}} {{item.firstName}} {{item.middleName}}</ion-label>
+                    </ion-item>
+                    <ion-item (click)="presentRolesModal(item.memberId)" slot="end">
+                        <ion-label>
+                            <a>To Member modal</a>
+                        </ion-label>
+                    </ion-item>
+                </ion-item-group>
+            </ion-card-content>
+        </ion-card>
+    </ion-virtual-scroll>
 </ion-content>

@@ -12,6 +12,8 @@ import {OrganizationInfo} from '../models/organization/organization-info';
 import {GenerateOrganizationJoinJwt} from '../models/generate-organization-join-jwt';
 import {PrivateJoinToken} from '../models/private-join-token';
 import {OrganizationRoleInfo} from '../models/organization/organization-role-info';
+import {CreateOrganizationRole} from '../models/organization/create-organization-role';
+import {RenameOrganizationRole} from '../models/organization/RenameOrganizationRole';
 
 @Injectable({
     providedIn: 'root'
@@ -75,5 +77,21 @@ export class OrganizationService {
 
     getOrganizationRoles(organizationId: number): Observable<OrganizationRoleInfo[]> {
         return this.http.get<OrganizationRoleInfo[]>(`${environment.serverUrl}/organizations/${organizationId}/roles`);
+    }
+
+    createOrganizationRole(createOrganizationRole: CreateOrganizationRole): Observable<void> {
+        return this.http.post<void>(`${environment.serverUrl}/organizations/roles/create`, createOrganizationRole);
+    }
+
+    deleteOrganizationRole(organizationRoleId: number): Observable<void> {
+        return this.http.delete<void>(`${environment.serverUrl}/organizations/roles/${organizationRoleId}`);
+    }
+
+    renameOrganizationRole(renameOrganizationRole: RenameOrganizationRole): Observable<void> {
+        return this.http.put<void>(`${environment.serverUrl}/organizations/roles/rename`, renameOrganizationRole);
+    }
+
+    getOrganizationMember(organizationId: number, userId: number): Observable<OrganizationMember> {
+        return this.http.get<OrganizationMember>(`${environment.serverUrl}/organizations/${organizationId}/members/${userId}`);
     }
 }

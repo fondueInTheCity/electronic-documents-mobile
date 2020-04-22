@@ -7,14 +7,19 @@ import {IonicModule} from '@ionic/angular';
 import {OrganizationViewMembersPageRoutingModule} from './organization-view-members-routing.module';
 
 import {OrganizationViewMembersPage} from './organization-view-members.page';
+import {MemberViewPageModule} from './member-view/member-view.module';
+import {MemberViewPage} from './member-view/member-view.page';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    IonicModule,
-    OrganizationViewMembersPageRoutingModule
-  ],
-  declarations: [OrganizationViewMembersPage]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        IonicModule,
+        OrganizationViewMembersPageRoutingModule,
+        MemberViewPageModule
+    ],
+    declarations: [OrganizationViewMembersPage],
+    entryComponents: [MemberViewPage]
 })
-export class OrganizationViewMembersPageModule {}
+export class OrganizationViewMembersPageModule {
+}

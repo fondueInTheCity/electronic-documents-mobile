@@ -1,12 +1,24 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>
-        <ion-icon routerLink="../../../" name="arrow-back-outline"></ion-icon>
-        Member
-    </ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>
+            <ion-icon (click)="back()" name="arrow-back-outline"></ion-icon>
+            Member
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <ion-item-group *ngIf="organizationMember">
+        <ion-virtual-scroll [items]="organizationMember?.roles">
+            <ion-item *virtualItem="let item;">
+                <ion-chip>
+                    <ion-label>{{item.name}}</ion-label>
+                    <ion-icon name="close-circle"></ion-icon>
+                </ion-chip>
+            </ion-item>
+        </ion-virtual-scroll>
+    </ion-item-group>
+<!--    <ion-select interface="action-sheet">-->
+<!--        <ion-select-option *ngFor="let i of getAnotherRoles()" ></ion-select-option>-->
+<!--    </ion-select>-->
 </ion-content>
