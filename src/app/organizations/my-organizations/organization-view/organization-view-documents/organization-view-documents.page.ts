@@ -10,8 +10,6 @@ import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {PropertiesService} from '../../../../services/properties.service';
 import {DocumentListInfo} from '../../../../models/documents/document-list-info';
 import {AlertController} from '@ionic/angular';
-import {loadingController} from '@ionic/core';
-import {FTP} from '@ionic-native/ftp/ngx';
 
 
 @Component({
@@ -24,6 +22,8 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
     documents: DocumentInfo[];
     uploadSubscription: Subscription;
     getFilesSubscription: Subscription;
+    changeSubscription: Subscription;
+    approveDenySubscription: Subscription;
     organizationId: number;
     client: any;
 
@@ -67,7 +67,7 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
                 private alertController: AlertController) {
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.userId = this.tokenStorageService.getId();
         this.organizationId = this.properties.getCurrentOrganizationId();
         this.getFiles();
@@ -77,14 +77,14 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
         this.selectedFiles = event.target.files;
     }
 
-    upload() {
+    async upload() {
         this.progress = 0;
-
         this.currentFile = this.selectedFiles.item(0);
+        this.properties.unsubscribe(this.uploadSubscription);
         this.documentsService.upload(this.currentFile, this.organizationId, this.userId).subscribe(
             event => {
                 if (event.type === HttpEventType.UploadProgress) {
-                    this.progress = Math.round(100 * event.loaded / event.total);
+                    this.progress = Math.round(event.loaded / event.total);
                 } else if (event instanceof HttpResponse) {
                     this.progress = 0;
                     this.getFiles();
@@ -99,11 +99,14 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
         this.selectedFiles = undefined;
     }
 
-    private getFiles(): void {
+    private async getFiles() {
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getFilesSubscription);
         this.getFilesSubscription = this.documentsService.getMyOrganizationDocumentsInfo(this.organizationId, this.userId)
-            .subscribe((data) =>
-                this.filesInfo = data
-            );
+            .subscribe(async (data) => {
+                await this.properties.endLoading();
+                this.filesInfo = data;
+            });
     }
 
     async clickFun(item: DocumentInfo) {
@@ -144,7 +147,9 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
                 }, {
                     text: 'Ok',
                     handler: () => {
-                        this.organizationService.changeDocumentState(item.id, 'WAITING').subscribe(() => this.getFiles());
+                        this.properties.unsubscribe(this.changeSubscription);
+                        this.changeSubscription = this.organizationService.changeDocumentState(item.id, 'WAITING')
+                            .subscribe(() => this.getFiles());
                     }
                 }
             ]
@@ -171,17 +176,14 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
     }
 
     async approveDenyDocument(answer: boolean, documentId: number) {
-        this.organizationId = this.properties.getCurrentOrganizationId();
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.organizationService.approveDenyDocument(documentId, answer).subscribe(() => {
-                loading.dismiss();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.approveDenySubscription);
+        this.approveDenySubscription = this.organizationService.approveDenyDocument(documentId, answer)
+            .subscribe(async () => {
+                await this.properties.endLoading();
                 this.getFiles();
-            }, error => {
-                loading.dismiss();
+            }, async error => {
+                await this.properties.endLoading();
             }
         );
     }
@@ -191,9 +193,9 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.getFilesSubscription.unsubscribe();
-        if (this.uploadSubscription) {
-            this.uploadSubscription.unsubscribe();
-        }
+        this.properties.unsubscribe(this.changeSubscription);
+        this.properties.unsubscribe(this.getFilesSubscription);
+        this.properties.unsubscribe(this.uploadSubscription);
+        this.properties.unsubscribe(this.approveDenySubscription);
     }
 }

@@ -1,23 +1,29 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {OrganizationService} from '../../../../../services/organization.service';
 import {OrganizationRoleInfo} from '../../../../../models/organization/organization-role-info';
-import {loadingController} from '@ionic/core';
 import {ActionSheetController, AlertController, ModalController} from '@ionic/angular';
 import {CreateOrganizationRole} from '../../../../../models/organization/create-organization-role';
+import {PropertiesService} from '../../../../../services/properties.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-organization-roles-modal',
     templateUrl: './organization-roles-modal.page.html',
     styleUrls: ['./organization-roles-modal.page.scss'],
 })
-export class OrganizationRolesModalPage implements OnInit {
+export class OrganizationRolesModalPage implements OnInit, OnDestroy {
     @Input() organizationId;
     organizationRoles: OrganizationRoleInfo[];
+    getSubscription: Subscription;
+    createSubscription: Subscription;
+    deleteSubscription: Subscription;
+    renameSubscription: Subscription;
 
     constructor(private organizationService: OrganizationService,
                 private alertController: AlertController,
                 private actionSheetController: ActionSheetController,
-                private modalController: ModalController) {
+                private modalController: ModalController,
+                private properties: PropertiesService) {
     }
 
     async ngOnInit() {
@@ -25,17 +31,15 @@ export class OrganizationRolesModalPage implements OnInit {
     }
 
     async loadOrganizationRoles() {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.organizationService.getOrganizationRoles(this.organizationId).subscribe((data) => {
-            loading.dismiss();
-            this.organizationRoles = data;
-        }, error => {
-            loading.dismiss();
-        });
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getSubscription);
+        this.getSubscription = this.organizationService.getOrganizationRoles(this.organizationId)
+            .subscribe(async (data) => {
+                await this.properties.endLoading();
+                this.organizationRoles = data;
+            }, async error => {
+                await this.properties.endLoading();
+            });
     }
 
     async createOrganizationRoleAlert() {
@@ -58,7 +62,9 @@ export class OrganizationRolesModalPage implements OnInit {
                 }, {
                     text: 'Create',
                     handler: (value: CreateOrganizationRole) => {
-                        this.organizationService.createOrganizationRole({name: value.name, organizationId: this.organizationId})
+                        this.properties.unsubscribe(this.createSubscription);
+                        this.createSubscription = this.organizationService.createOrganizationRole(
+                            {name: value.name, organizationId: this.organizationId})
                             .subscribe(() => this.loadOrganizationRoles());
                     }
                 }
@@ -94,16 +100,13 @@ export class OrganizationRolesModalPage implements OnInit {
     }
 
     async deleteOrganizationRole(roleId: number) {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.organizationService.deleteOrganizationRole(roleId).subscribe(() => {
-            loading.dismiss();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.deleteSubscription);
+        this.deleteSubscription = this.organizationService.deleteOrganizationRole(roleId).subscribe(async () => {
+            await this.properties.endLoading();
             this.loadOrganizationRoles();
-        }, error => {
-            loading.dismiss();
+        }, async error => {
+            await this.properties.endLoading();
         });
     }
 
@@ -136,20 +139,25 @@ export class OrganizationRolesModalPage implements OnInit {
     }
 
     async renameOrganizationRole(id: number, newName: string) {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.organizationService.renameOrganizationRole({id, newName}).subscribe(() => {
-            loading.dismiss();
-            this.loadOrganizationRoles();
-        }, error => {
-            loading.dismiss();
-        });
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.renameSubscription);
+        this.renameSubscription = this.organizationService.renameOrganizationRole({id, newName})
+            .subscribe(async () => {
+                await this.properties.endLoading();
+                this.loadOrganizationRoles();
+            }, async error => {
+                await this.properties.endLoading();
+            });
     }
 
     back() {
         this.modalController.dismiss();
+    }
+
+    ngOnDestroy(): void {
+        this.properties.unsubscribe(this.getSubscription);
+        this.properties.unsubscribe(this.createSubscription);
+        this.properties.unsubscribe(this.deleteSubscription);
+        this.properties.unsubscribe(this.renameSubscription);
     }
 }

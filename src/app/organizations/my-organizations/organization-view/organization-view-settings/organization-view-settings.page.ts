@@ -7,7 +7,6 @@ import {FormBuilder} from '@angular/forms';
 import {PropertiesService} from '../../../../services/properties.service';
 import {DocumentType} from '../../../../models/enum/DocumentType';
 import {AlertController, ModalController} from '@ionic/angular';
-import {loadingController} from '@ionic/core';
 import {GenerateOrganizationJoinJwt} from '../../../../models/generate-organization-join-jwt';
 import {PrivateJoinToken} from '../../../../models/private-join-token';
 import {OrganizationRolesModalPage} from './organization-roles-modal/organization-roles-modal.page';
@@ -39,47 +38,29 @@ export class OrganizationViewSettingsPage implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.organizationId = this.properties.getCurrentOrganizationId();
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.getSubscription = this.service.getOrganizationSettings(this.organizationId).subscribe((data) => {
-                loading.dismiss();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getSubscription);
+        this.getSubscription = this.service.getOrganizationSettings(this.organizationId).subscribe(async (data) => {
+                await this.properties.endLoading();
                 this.organizationSettings = data;
                 this.generalForm.reset(data);
             },
             async error => {
-                await loading.dismiss();
-
-                const alert = await this.alertController.create({
-                    header: 'Error',
-                    message: `${error.error.message}`,
-                    buttons: ['OK']
-                });
-                await alert.present();
+                await this.properties.endLoading();
+                this.properties.getErrorAlertOpts(error);
             });
     }
 
     async onSubmit() {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.updateSubscription);
         this.updateSubscription = this.service.updateOrganizationSettings(this.organizationId, this.generalForm.value)
-            .subscribe(() => {
-                    loading.dismiss();
+            .subscribe(async () => {
+                    await this.properties.endLoading();
                 },
                 async error => {
-                    await loading.dismiss();
-
-                    const alert = await this.alertController.create({
-                        header: 'Error',
-                        message: `${error.error.message}`,
-                        buttons: ['OK']
-                    });
-                    await alert.present();
+                    await this.properties.endLoading();
+                    this.properties.getErrorAlertOpts(error);
                 });
     }
 
@@ -114,14 +95,12 @@ export class OrganizationViewSettingsPage implements OnInit, OnDestroy {
     }
 
     getTypes(): string[] {
-        return Object.keys(DocumentType).filter(k => typeof DocumentType[k as any] === 'number');
+        return this.properties.getKeys(DocumentType);
     }
 
     ngOnDestroy(): void {
-        this.getSubscription.unsubscribe();
-        if (this.updateSubscription) {
-            this.updateSubscription.unsubscribe();
-        }
+        this.properties.unsubscribe(this.updateSubscription);
+        this.properties.unsubscribe(this.getSubscription);
     }
 
     async presentRolesModal() {

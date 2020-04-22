@@ -5,8 +5,6 @@ import {ActivatedRoute} from '@angular/router';
 import {OrganizationService} from '../../../../services/organization.service';
 import {PropertiesService} from '../../../../services/properties.service';
 import {AlertController, ModalController} from '@ionic/angular';
-import {loadingController} from '@ionic/core';
-import {OrganizationRolesModalPage} from '../organization-view-settings/organization-roles-modal/organization-roles-modal.page';
 import {MemberViewPage} from './member-view/member-view.page';
 
 @Component({
@@ -26,25 +24,20 @@ export class OrganizationViewMembersPage implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
+        this.getMembers();
+    }
 
-        await loading.present();
+    async getMembers() {
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getSubscription);
         this.getSubscription = this.organizationService.getMembers(this.properties.getCurrentOrganizationId())
-            .subscribe((data: OrganizationMember[]) => {
-                loading.dismiss();
-                this.members = data;
-            },
+            .subscribe(async (data: OrganizationMember[]) => {
+                    await this.properties.endLoading();
+                    this.members = data;
+                },
                 async error => {
-                    await loading.dismiss();
-
-                    const alert = await this.alertController.create({
-                        header: 'Error',
-                        message: `${error.error.message}`,
-                        buttons: ['OK']
-                    });
-                    await alert.present();
+                    await this.properties.endLoading();
+                    this.properties.getErrorAlertOpts(error);
                 });
     }
 
@@ -60,6 +53,6 @@ export class OrganizationViewMembersPage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.getSubscription.unsubscribe();
+        this.properties.unsubscribe(this.getSubscription);
     }
 }

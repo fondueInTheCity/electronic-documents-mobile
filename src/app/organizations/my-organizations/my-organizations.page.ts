@@ -3,14 +3,12 @@ import {Subscription} from 'rxjs';
 import {OrganizationInfo} from '../../models/organization/organization-info';
 import {UserService} from '../../services/user.service';
 import {TokenStorageService} from '../../auth/services/token-storage.service';
-import {loadingController} from '@ionic/core';
-import {FormBuilder} from '@angular/forms';
-import {AlertController} from '@ionic/angular';
+import {PropertiesService} from '../../services/properties.service';
 
 @Component({
-  selector: 'app-my-organizations',
-  templateUrl: './my-organizations.page.html',
-  styleUrls: ['./my-organizations.page.scss'],
+    selector: 'app-my-organizations',
+    templateUrl: './my-organizations.page.html',
+    styleUrls: ['./my-organizations.page.scss'],
 })
 export class MyOrganizationsPage implements OnInit, OnDestroy {
     organizationsInfo = Array<OrganizationInfo>();
@@ -18,33 +16,28 @@ export class MyOrganizationsPage implements OnInit, OnDestroy {
 
     constructor(private userService: UserService,
                 private tokenStorageService: TokenStorageService,
-                private alertController: AlertController) {
+                private properties: PropertiesService) {
     }
 
     async ngOnInit() {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
+        this.getOrganizations();
+    }
 
-        await loading.present();
+    async getOrganizations() {
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getSubscription);
         this.getSubscription = this.userService.getOrganizationsInfo(this.tokenStorageService.getUsername())
-            .subscribe(organizationsInfo => {
-                loading.dismiss();
-                this.organizationsInfo = organizationsInfo;
-            },
+            .subscribe(async (organizationsInfo) => {
+                    await this.properties.endLoading();
+                    this.organizationsInfo = organizationsInfo;
+                },
                 async error => {
-                    await loading.dismiss();
-
-                    const alert = await this.alertController.create({
-                        header: 'Error',
-                        message: `${error.error.message}`,
-                        buttons: ['OK']
-                    });
-                    await alert.present();
+                    await this.properties.endLoading();
+                    this.properties.getErrorAlertOpts(error);
                 });
     }
 
     ngOnDestroy(): void {
-        this.getSubscription.unsubscribe();
+        this.properties.unsubscribe(this.getSubscription);
     }
 }

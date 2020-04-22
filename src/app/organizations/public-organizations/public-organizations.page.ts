@@ -1,12 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {loadingController} from '@ionic/core';
 import {OrganizationInfo} from '../../models/organization/organization-info';
 import {Subscription} from 'rxjs';
-import {UserService} from '../../services/user.service';
 import {TokenStorageService} from '../../auth/services/token-storage.service';
 import {AlertController} from '@ionic/angular';
 import {OrganizationService} from '../../services/organization.service';
-import {DocumentInfo} from '../../models/documents/document-info';
+import {PropertiesService} from '../../services/properties.service';
 
 @Component({
     selector: 'app-public-organizations',
@@ -20,30 +18,26 @@ export class PublicOrganizationsPage implements OnInit, OnDestroy {
 
     constructor(private organizationService: OrganizationService,
                 private tokenStorageService: TokenStorageService,
-                private alertController: AlertController) {
+                private alertController: AlertController,
+                private properties: PropertiesService) {
     }
 
     async ngOnInit() {
         this.userId = this.tokenStorageService.getId();
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
+        this.getOrganizations();
+    }
 
-        await loading.present();
+    async getOrganizations() {
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getSubscription);
         this.getSubscription = this.organizationService.getPublicOrganizations()
-            .subscribe((organizationsInfo) => {
-                    loading.dismiss();
+            .subscribe(async (organizationsInfo) => {
+                    await this.properties.endLoading();
                     this.organizationsInfo = organizationsInfo;
                 },
                 async error => {
-                    await loading.dismiss();
-
-                    const alert = await this.alertController.create({
-                        header: 'Error',
-                        message: `${error.error.message}`,
-                        buttons: ['OK']
-                    });
-                    await alert.present();
+                    await this.properties.endLoading();
+                    this.properties.getErrorAlertOpts(error);
                 });
     }
 
@@ -64,6 +58,6 @@ export class PublicOrganizationsPage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.getSubscription.unsubscribe();
+        this.properties.unsubscribe(this.getSubscription);
     }
 }

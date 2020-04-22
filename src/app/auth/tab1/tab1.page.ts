@@ -3,8 +3,7 @@ import {Router} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
 import {TokenStorageService} from '../services/token-storage.service';
-import {loadingController} from '@ionic/core';
-import {AlertController} from '@ionic/angular';
+import {PropertiesService} from '../../services/properties.service';
 
 @Component({
     selector: 'app-tab1',
@@ -18,39 +17,27 @@ export class Tab1Page implements OnDestroy {
     constructor(private authService: AuthService,
                 private router: Router,
                 private tokenStorage: TokenStorageService,
-                private alertController: AlertController) {
+                private properties: PropertiesService) {
     }
 
     async login(form) {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.loginSubscription);
         this.loginSubscription = this.authService.attemptAuth(form.value).subscribe(
-            data => {
-                loading.dismiss();
+            async (data) => {
+                await this.properties.endLoading();
                 this.tokenStorage.saveData(data.token, data.username, data.id);
                 this.router.navigate(['/dashboard']);
             },
             async error => {
-                await loading.dismiss();
-
-                const alert = await this.alertController.create({
-                    header: 'Error',
-                    message: `${error.error.message}`,
-                    buttons: ['OK']
-                });
-                await alert.present();
-
+                await this.properties.endLoading();
+                this.properties.getErrorAlertOpts(error);
                 this.loginFailed = true;
             }
         );
     }
 
     ngOnDestroy(): void {
-        if (this.loginSubscription) {
-            this.loginSubscription.unsubscribe();
-        }
+        this.properties.unsubscribe(this.loginSubscription);
     }
 }

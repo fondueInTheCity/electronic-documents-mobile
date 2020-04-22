@@ -3,7 +3,6 @@ import {LoadingOptions} from '@ionic/core/dist/types/components/loading/loading-
 import {loadingController} from '@ionic/core';
 import {Subscription} from 'rxjs';
 import {AlertController} from '@ionic/angular';
-import {DocumentType} from '../models/enum/DocumentType';
 
 @Injectable({
     providedIn: 'root'
@@ -36,7 +35,7 @@ export class PropertiesService {
     }
 
     unsubscribe(subscription: Subscription) {
-        if (subscription) {
+        if (subscription && !subscription.closed) {
             subscription.unsubscribe();
         }
     }

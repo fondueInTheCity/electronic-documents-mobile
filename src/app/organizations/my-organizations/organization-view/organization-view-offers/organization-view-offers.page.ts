@@ -11,8 +11,9 @@ import {OrganizationOffer} from '../../../../models/organization/organization-of
     templateUrl: './organization-view-offers.page.html',
     styleUrls: ['./organization-view-offers.page.scss'],
 })
-export class OrganizationViewOffersPage implements OnInit {
+export class OrganizationViewOffersPage implements OnInit, OnDestroy {
     getSubscription: Subscription;
+    answerSubscription: Subscription;
     organizationId: number;
     requests: OrganizationOffer[];
 
@@ -45,40 +46,34 @@ export class OrganizationViewOffersPage implements OnInit {
 
     async sendAnswer(answer: boolean, offerId: number) {
         this.organizationId = this.properties.getCurrentOrganizationId();
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.organizationService.answerOffer(this.organizationId, {offerId, answer}).subscribe(() => {
-                loading.dismiss();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.answerSubscription);
+        this.answerSubscription = this.organizationService.answerOffer(this.organizationId, {offerId, answer})
+            .subscribe(async () => {
+                await this.properties.endLoading();
                 this.getRequests();
-            }, error => {
-                loading.dismiss();
+            }, async error => {
+                await this.properties.endLoading();
             }
         );
     }
 
     async getRequests() {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.organizationService.getOrganizationOffers(this.organizationId)
-            .subscribe((data) => {
-                    loading.dismiss();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.getSubscription);
+        this.getSubscription = this.organizationService.getOrganizationOffers(this.organizationId)
+            .subscribe(async (data) => {
+                    await this.properties.endLoading();
                     this.requests = data;
                 },
                 async error => {
-                    await loading.dismiss();
-
-                    const alert = await this.alertController.create({
-                        header: 'Error',
-                        message: `${error.error.message}`,
-                        buttons: ['OK']
-                    });
-                    await alert.present();
+                    await this.properties.endLoading();
+                    this.properties.getErrorAlertOpts(error);
                 });
+    }
+
+    ngOnDestroy(): void {
+        this.properties.unsubscribe(this.getSubscription);
+        this.properties.unsubscribe(this.answerSubscription);
     }
 }

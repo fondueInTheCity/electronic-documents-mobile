@@ -1,42 +1,36 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {Router} from '@angular/router';
-import {TokenStorageService} from '../services/token-storage.service';
-import {AlertController} from '@ionic/angular';
-import {loadingController} from '@ionic/core';
+import {PropertiesService} from '../../services/properties.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-tab2',
     templateUrl: 'tab2.page.html',
     styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page {
+export class Tab2Page implements OnDestroy {
+    signUpSubscription: Subscription;
 
     constructor(private authService: AuthService,
                 private router: Router,
-                private alertController: AlertController) {
+                private properties: PropertiesService) {
     }
 
     async register(form) {
-        const loading = await loadingController.create({
-            message: 'Please wait...'
-        });
-
-        await loading.present();
-        this.authService.signUp(form.value).subscribe((res) => {
-                loading.dismiss();
+        await this.properties.startLoading();
+        this.properties.unsubscribe(this.signUpSubscription);
+        this.authService.signUp(form.value).subscribe(async (res) => {
+                await this.properties.endLoading();
                 this.router.navigateByUrl('/auth/login');
             },
             async error => {
-                await loading.dismiss();
-
-                const alert = await this.alertController.create({
-                    header: 'Error',
-                    message: `${error.error.message}`,
-                    buttons: ['OK']
-                });
-                await alert.present();
+                await this.properties.endLoading();
+                this.properties.getErrorAlertOpts(error);
             });
     }
 
+    ngOnDestroy(): void {
+        this.properties.unsubscribe(this.signUpSubscription);
+    }
 }

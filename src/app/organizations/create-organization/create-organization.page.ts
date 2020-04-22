@@ -2,12 +2,10 @@ import {Component, OnDestroy} from '@angular/core';
 import {FormBuilder} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {OrganizationService} from '../../services/organization.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {TokenStorageService} from '../../auth/services/token-storage.service';
 import {DocumentType} from '../../models/enum/DocumentType';
-import {AlertController} from '@ionic/angular';
 import {PropertiesService} from '../../services/properties.service';
-import {tap} from 'rxjs/operators';
 
 @Component({
     selector: 'app-create-organization',
@@ -30,16 +28,14 @@ export class CreateOrganizationPage implements OnDestroy {
     }
 
     async onSubmit() {
+        await this.properties.startLoading();
         this.properties.unsubscribe(this.createSubscription);
-        this.createSubscription = this.organizationService.createOrganization(this.organizationForm.value).pipe(
-            tap(async () => await this.properties.startLoading())
-        ).subscribe(async () => {
+        this.createSubscription = this.organizationService.createOrganization(this.organizationForm.value).subscribe(async () => {
             await this.properties.endLoading();
+            this.router.navigate(['./../organizations']);
         }, async error => {
             await this.properties.endLoading();
             this.properties.getErrorAlertOpts(error);
-        }, async () => {
-            this.router.navigate(['./../organizations']);
         });
     }
 
