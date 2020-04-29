@@ -30,7 +30,8 @@ export class CreateOrganizationPage implements OnDestroy {
     async onSubmit() {
         await this.properties.startLoading();
         this.properties.unsubscribe(this.createSubscription);
-        this.createSubscription = this.organizationService.createOrganization(this.organizationForm.value).subscribe(async () => {
+        this.createSubscription = this.organizationService.createOrganization(this.organizationForm.value).subscribe(async (id) => {
+            this.tokenService.addNewOrganizationId(id);
             await this.properties.endLoading();
             this.router.navigate(['./../organizations']);
         }, async error => {

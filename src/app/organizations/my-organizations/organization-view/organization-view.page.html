@@ -11,7 +11,7 @@
     <ion-item>
         <ion-label>Folders</ion-label>
         <ion-select (ionChange)="route($event)" [(ngModel)]="select" interface="action-sheet">
-            <ion-select-option (click)="route(link)" *ngFor="let link of links">{{link}}</ion-select-option>
+            <ion-select-option (click)="route(link)" *ngFor="let link of getLinks()">{{link}}</ion-select-option>
         </ion-select>
     </ion-item>
     <router-outlet></router-outlet>

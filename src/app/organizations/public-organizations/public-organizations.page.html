@@ -8,6 +8,10 @@
 </ion-header>
 
 <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
     <ion-virtual-scroll [items]="organizationsInfo" >
         <ion-card *virtualItem="let item;">
             <ion-card-header>
@@ -24,13 +28,23 @@
                     <ion-item>
                         <ion-label>Organization Type: {{item?.type}}</ion-label>
                     </ion-item>
-                    <ion-item (click)="approveDenyJoinAlert(item.id)" slot="end">
+                    <ion-item *ngIf="!item.subscribe" (click)="approveDenyJoinAlert(item.id)" slot="end">
                         <ion-label>
                             <a>Create Request To Organization</a>
+                        </ion-label>
+                    </ion-item>
+                    <ion-item *ngIf="item.subscribe" slot="end">
+                        <ion-label>
+                            <a>You in this organization now</a>
                         </ion-label>
                     </ion-item>
                 </ion-item-group>
             </ion-card-content>
         </ion-card>
     </ion-virtual-scroll>
+    <ion-item *ngIf="!organizationsInfo || organizationsInfo.length === 0">
+        <ion-label >
+            Nothing
+        </ion-label>
+    </ion-item>
 </ion-content>

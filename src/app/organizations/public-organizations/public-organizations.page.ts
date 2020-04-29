@@ -27,34 +27,44 @@ export class PublicOrganizationsPage implements OnInit, OnDestroy {
         this.getOrganizations();
     }
 
-    async getOrganizations() {
+    async getOrganizations(event = null) {
         await this.properties.startLoading();
         this.properties.unsubscribe(this.getSubscription);
         this.getSubscription = this.organizationService.getPublicOrganizations()
             .subscribe(async (organizationsInfo) => {
                     await this.properties.endLoading();
                     this.organizationsInfo = organizationsInfo;
+                    if (event) {
+                        event.target.complete();
+                    }
                 },
                 async error => {
                     await this.properties.endLoading();
                     this.properties.getErrorAlertOpts(error);
+                    if (event) {
+                        event.target.complete();
+                    }
                 });
     }
 
     async approveDenyJoinAlert(organizationId: number) {
         const alert = await this.alertController.create({
-            header: 'Error',
-            message: `Approve document?`,
+            header: 'Send Request to Organization.',
+            message: `Do you want to approve command?`,
             buttons: [
                 {
-                    text: 'Approve',
+                    text: 'Yes',
                     handler: () => this.organizationService.createRequest(organizationId, this.userId).subscribe()
                 },
                 {
-                    text: 'Deny'
+                    text: 'No'
                 }]
         });
         await alert.present();
+    }
+
+    async doRefresh(event) {
+        this.getOrganizations(event);
     }
 
     ngOnDestroy(): void {

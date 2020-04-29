@@ -1,12 +1,43 @@
 <ion-content>
-    <ion-item-group >
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+    <ion-item-group>
+        <ion-label>
+            Users' Requests:
+        </ion-label>
         <ion-item>
-            <ion-virtual-scroll *ngIf="requests?.length > 0" [items]="requests">
+            <ion-virtual-scroll *ngIf="userRequests?.length > 0" [items]="userRequests">
                 <ion-item (click)="openOffer(item)" *virtualItem="let item;">
                     <ion-label>{{item.ownerUsername}}</ion-label>
                 </ion-item>
             </ion-virtual-scroll>
-            <ion-label *ngIf="requests?.length == 0">Nothing requests</ion-label>
+            <ion-label *ngIf="!userRequests || userRequests?.length == 0">Nothing requests</ion-label>
+        </ion-item>
+    </ion-item-group>
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <div>
+                    <ion-button (click)="presentRolesModal()" fill="outline" size="large" expand="block">
+                        Create Organization Request
+                    </ion-button>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-item-group>
+        <ion-label>
+            Organization's Requests:
+        </ion-label>
+        <ion-item>
+            <ion-virtual-scroll *ngIf="organizationRequests?.length > 0" [items]="organizationRequests">
+                <ion-item *virtualItem="let item;">
+                    <ion-label>{{item.ownerUsername}}</ion-label>
+                </ion-item>
+            </ion-virtual-scroll>
+            <ion-label *ngIf="!organizationRequests || organizationRequests?.length == 0">Nothing requests</ion-label>
         </ion-item>
     </ion-item-group>
 </ion-content>

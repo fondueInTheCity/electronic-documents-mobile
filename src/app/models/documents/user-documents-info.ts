@@ -1,5 +1,9 @@
 import {DocumentInfo} from './document-info';
 
 export class UserDocumentsInfo {
-  documentsInfo: DocumentInfo[];
+    heapDocuments: DocumentInfo[];
+    waitingDocuments: DocumentInfo[];
+    progressDocuments: DocumentInfo[];
+    answeredDocuments: DocumentInfo[];
+    joinToMe: DocumentInfo[];
 }

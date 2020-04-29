@@ -2,6 +2,17 @@ ion-content {
   --background: #1F2933;
   --color: #C5C6C7;
 
+  .custom-file-upload {
+    border: 1px solid #1F2933;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
   ion-item-group {
     width: 100%;
 

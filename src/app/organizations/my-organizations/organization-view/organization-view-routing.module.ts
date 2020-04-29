@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 
 import {OrganizationViewPage} from './organization-view.page';
+import {CheckPrmissionsGuard} from '../../../guards/check-prmissions.guard';
 
 const routes: Routes = [
     {

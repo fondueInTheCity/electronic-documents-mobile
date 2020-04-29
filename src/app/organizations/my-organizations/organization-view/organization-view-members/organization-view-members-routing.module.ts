@@ -7,10 +7,6 @@ const routes: Routes = [
   {
     path: '',
     component: OrganizationViewMembersPage
-  },
-  {
-    path: ':memberId',
-    loadChildren: () => import('./member-view/member-view.module').then( m => m.MemberViewPageModule)
   }
 ];
 

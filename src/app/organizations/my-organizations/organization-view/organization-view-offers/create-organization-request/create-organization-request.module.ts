@@ -4,7 +4,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 
 import {IonicModule} from '@ionic/angular';
 
-import {DocumentViewPage} from './document-view.page';
+import {CreateOrganizationRequestPage} from './create-organization-request.page';
 
 @NgModule({
     imports: [
@@ -12,8 +12,8 @@ import {DocumentViewPage} from './document-view.page';
         ReactiveFormsModule,
         IonicModule
     ],
-    declarations: [DocumentViewPage],
-    exports: [DocumentViewPage]
+    declarations: [CreateOrganizationRequestPage],
+    exports: [CreateOrganizationRequestPage]
 })
-export class DocumentViewPageModule {
+export class CreateOrganizationRequestPageModule {
 }

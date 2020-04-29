@@ -5,6 +5,10 @@ import {OrganizationDocumentsInfo} from '../models/documents/organization-docume
 import {environment} from '../../environments/environment.prod';
 import {OrganizationDocumentView} from '../models/documents/organization-document-view';
 import {UserDocumentsInfo} from '../models/documents/user-documents-info';
+import {HeapDocumentView} from '../models/documents/heap-document-view';
+import {WaitingDocumentView} from '../models/documents/waiting-document-view';
+import {JoinToMeDocumentView} from '../models/documents/join-to-me-document-view';
+import {DocumentAnswer} from '../models/documents/document-answer';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +41,32 @@ export class DocumentService {
 
     getUserDocumentsInfo(userId: number): Observable<UserDocumentsInfo> {
         return this.http.get<UserDocumentsInfo>(`${environment.serverUrl}/documents/user/${userId}`);
+    }
+
+    getHeapDocument(documentId: number): Observable<HeapDocumentView> {
+        return this.http.get<HeapDocumentView>(`${environment.serverUrl}/documents/${documentId}/heap`);
+    }
+
+    // downloadDocument(documentId: number): Observable<File> {
+    //     return this.http.get<UserDocumentsInfo>(`${environment.serverUrl}/documents/user/${userId}`);
+    // }
+    approveUserHeapDocument(value: HeapDocumentView): Observable<void> {
+        return this.http.post<void>(`${environment.serverUrl}/documents/${value.id}/heap`, value);
+    }
+
+    getWaitingDocument(documentId: number): Observable<WaitingDocumentView> {
+        return this.http.get<WaitingDocumentView>(`${environment.serverUrl}/documents/${documentId}/waiting`);
+    }
+
+    getJoinToMeDocument(documentId: number): Observable<JoinToMeDocumentView> {
+        return this.http.get<JoinToMeDocumentView>(`${environment.serverUrl}/documents/${documentId}/join-to-me`);
+    }
+
+    downloadDocumentForCheck(documentId: number): Observable<void> {
+        return this.http.post<void>(`${environment.serverUrl}/documents/${documentId}/join-to-me/download`, {});
+    }
+
+    sendAnswer(documentId: number, answer: DocumentAnswer): Observable<void> {
+        return this.http.post<void>(`${environment.serverUrl}/documents/${documentId}/join-to-me/answer`, answer);
     }
 }

@@ -1,9 +1,15 @@
 <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
     <ion-progress-bar *ngIf="progress" value="{{progress}}"></ion-progress-bar>
 
     <ion-item>
-        <ion-label>File</ion-label>
-        <ion-input type="file" (change)="selectFile($event)"></ion-input>
+        <label for="file-upload" class="custom-file-upload">
+            Custom Upload
+        </label>
+        <input id="file-upload" (change)="selectFile($event)" type="file"/>
         <ion-button fill="outline" size="large" class="btn btn-success" [disabled]="!selectedFiles" (click)="upload()">
             Upload
         </ion-button>
@@ -17,7 +23,7 @@
                 </ion-item>
                 <ion-item>
                     <ion-virtual-scroll [items]="filesInfo[info.documentsName]">
-                        <ion-item (click)="clickFun(item)" *virtualItem="let item;">
+                        <ion-item (click)="presentDocumentModal(item.id)" *virtualItem="let item;">
                             <ion-label>{{item.name}}</ion-label>
                         </ion-item>
                     </ion-virtual-scroll>

@@ -64,36 +64,6 @@ export class OrganizationViewSettingsPage implements OnInit, OnDestroy {
                 });
     }
 
-    async presentAlertPrompt() {
-        const alert = await this.alertController.create({
-            header: 'Create Join Private Token',
-            inputs: [
-                {
-                    name: 'username',
-                    type: 'text',
-                    placeholder: 'Username'
-                }
-            ],
-            buttons: [
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    cssClass: 'secondary',
-                    handler: () => {
-                    }
-                }, {
-                    text: 'Ok',
-                    handler: (value: GenerateOrganizationJoinJwt) => {
-                        this.service.createOrganizationJwtToken({username: value.username, organizationId: this.organizationId})
-                            .subscribe((data) => this.jwtPrivateJoinToken = data);
-                    }
-                }
-            ]
-        });
-
-        await alert.present();
-    }
-
     getTypes(): string[] {
         return this.properties.getKeys(DocumentType);
     }

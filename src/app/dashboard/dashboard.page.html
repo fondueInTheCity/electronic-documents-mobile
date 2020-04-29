@@ -10,19 +10,13 @@
         </ion-header>
     </div>
     <ion-menu side="start" content-id="main-content">
-        <ion-header>
-            <ion-toolbar>
-                <ion-title>
-                    <a routerLink="/profile">
-                        <ion-chip>
-                            <ion-avatar>
-                                <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
-                            </ion-avatar>
-                            <ion-label>Chip Avatar</ion-label>
-                        </ion-chip>
-                    </a>
-                </ion-title>
-            </ion-toolbar>
+        <ion-header routerLink="/profile">
+            <ion-item>
+                <ion-avatar>
+                    <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+                </ion-avatar>
+                <ion-label>{{this.currentUsername}}</ion-label>
+            </ion-item>
         </ion-header>
         <ion-content>
             <ion-list>
@@ -36,6 +30,11 @@
                     <ion-icon name="document-text-outline" slot="start"></ion-icon>
                     <ion-label>
                         Documents
+                    </ion-label>
+                </ion-item>
+                <ion-item (click)="logout()">
+                    <ion-label>
+                        Log Out
                     </ion-label>
                 </ion-item>
             </ion-list>

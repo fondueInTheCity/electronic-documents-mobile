@@ -8,9 +8,24 @@
 </ion-header>
 
 <ion-content>
-    <ul *ngIf="documentsInfo">
-        <li *ngFor="let i of documentsInfo">
-            <a [routerLink]="['./', i.id]">{{i.name}}</a>
-        </li>
-    </ul>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+    <ion-slides *ngIf="documents" pager="true" [options]="slideOpts">
+        <ion-slide *ngFor="let info of documentsInfo">
+            <ion-item-group>
+                <ion-item>
+                    {{info.header}}
+                </ion-item>
+                <ion-item>
+                    <ion-virtual-scroll [items]="documents[info.documentsName]">
+                        <ion-item (click)="presentDocumentModal(item.id, item.documentState)" *virtualItem="let item;">
+                            <ion-label>{{item.name}}</ion-label>
+                        </ion-item>
+                    </ion-virtual-scroll>
+                </ion-item>
+            </ion-item-group>
+        </ion-slide>
+    </ion-slides>
 </ion-content>

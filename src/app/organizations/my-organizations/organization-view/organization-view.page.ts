@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PropertiesService} from '../../../services/properties.service';
+import {TokenStorageService} from '../../../auth/services/token-storage.service';
 
 @Component({
     selector: 'app-organization-view',
@@ -15,7 +16,8 @@ export class OrganizationViewPage implements OnInit {
 
     constructor(private router: Router,
                 private activatedRoute: ActivatedRoute,
-                private properties: PropertiesService) {
+                private properties: PropertiesService,
+                private tokenStorageService: TokenStorageService) {
     }
 
     ngOnInit() {
@@ -32,5 +34,13 @@ export class OrganizationViewPage implements OnInit {
 
     back() {
         this.router.navigate([this.prevLink]);
+    }
+
+    getLinks(): string[] {
+        if (this.tokenStorageService.hasPermissions(this.properties.getCurrentOrganizationId())) {
+            return ['members', 'documents', 'settings', 'offers'];
+        } else {
+            return ['members', 'documents'];
+        }
     }
 }

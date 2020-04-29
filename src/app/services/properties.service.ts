@@ -22,7 +22,7 @@ export class PropertiesService {
     }
 
     setCurrentOrganizationId(organizationId: number) {
-        this.currentOrganizationId = organizationId;
+        this.currentOrganizationId = +organizationId;
     }
 
     async startLoading() {

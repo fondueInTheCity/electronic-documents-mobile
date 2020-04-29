@@ -14,6 +14,9 @@ import {PrivateJoinToken} from '../models/private-join-token';
 import {OrganizationRoleInfo} from '../models/organization/organization-role-info';
 import {CreateOrganizationRole} from '../models/organization/create-organization-role';
 import {RenameOrganizationRole} from '../models/organization/RenameOrganizationRole';
+import {OrganizationRequestsView} from '../models/organization/organization-requests-view';
+import {AddRole} from '../models/add-role';
+import {RemoveRole} from '../models/remove-role';
 
 @Injectable({
     providedIn: 'root'
@@ -23,8 +26,8 @@ export class OrganizationService {
     constructor(private http: HttpClient) {
     }
 
-    createOrganization(organizationCreate: OrganizationCreate): Observable<void> {
-        return this.http.post<void>(`${environment.serverUrl}/organizations`, organizationCreate);
+    createOrganization(organizationCreate: OrganizationCreate): Observable<number> {
+        return this.http.post<number>(`${environment.serverUrl}/organizations`, organizationCreate);
     }
 
     getView(organizationId: number): Observable<OrganizationView> {
@@ -47,12 +50,12 @@ export class OrganizationService {
         return this.http.post<void>(`${environment.serverUrl}/organizations/join/private`, privateJoinToken);
     }
 
-    getOrganizationOffers(organizationId: number): Observable<OrganizationOffer[]> {
-        return this.http.get<OrganizationOffer[]>(`${environment.serverUrl}/organizations/${organizationId}/offers`);
+    getOrganizationOffers(organizationId: number): Observable<OrganizationRequestsView> {
+        return this.http.get<OrganizationRequestsView>(`${environment.serverUrl}/organizations/${organizationId}/offers`);
     }
 
-    answerOffer(organizationId: number, answer: OrganizationAnswerOffer): Observable<void> {
-        return this.http.put<void>(`${environment.serverUrl}/organizations/${organizationId}/offers`, answer);
+    answerOffer(answer: OrganizationAnswerOffer): Observable<void> {
+        return this.http.put<void>(`${environment.serverUrl}/organizations/offers`, answer);
     }
 
     changeDocumentState(documentId: number, to: string): Observable<void> {
@@ -75,6 +78,10 @@ export class OrganizationService {
         return this.http.post<void>(`${environment.serverUrl}/organizations/${organizationId}/user/${userId}/request`, {});
     }
 
+    createOrganizationRequest(createOrganizationRequest: CreateOrganizationRequest): Observable<void> {
+        return this.http.post<void>(`${environment.serverUrl}/organizations/organization-request/create`, createOrganizationRequest);
+    }
+
     getOrganizationRoles(organizationId: number): Observable<OrganizationRoleInfo[]> {
         return this.http.get<OrganizationRoleInfo[]>(`${environment.serverUrl}/organizations/${organizationId}/roles`);
     }
@@ -93,5 +100,13 @@ export class OrganizationService {
 
     getOrganizationMember(organizationId: number, userId: number): Observable<OrganizationMember> {
         return this.http.get<OrganizationMember>(`${environment.serverUrl}/organizations/${organizationId}/members/${userId}`);
+    }
+
+    addRole(organizationId: number, memberId: number, value: AddRole): Observable<void> {
+        return this.http.post<void>(`${environment.serverUrl}/organizations/${organizationId}/members/${memberId}/roles`, value);
+    }
+
+    deleteRole(organizationId: number, memberId: number, id: number): Observable<void> {
+        return this.http.delete<void>(`${environment.serverUrl}/organizations/${organizationId}/members/${memberId}/roles/${id}`);
     }
 }

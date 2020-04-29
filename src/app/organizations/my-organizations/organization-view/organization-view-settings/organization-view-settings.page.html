@@ -20,16 +20,6 @@
                         </ion-button>
                     </div>
 
-                    <ion-item *ngIf="jwtPrivateJoinToken">
-                        <ion-label>Token:</ion-label>
-                        <ion-input type="text" [value]="jwtPrivateJoinToken.token"></ion-input>
-                    </ion-item>
-
-                    <div>
-                        <ion-button (click)="presentAlertPrompt()" fill="outline" size="large" expand="block">
-                            Generate Organization Token
-                        </ion-button>
-                    </div>
                     <div>
                         <ion-button (click)="presentRolesModal()" fill="outline" size="large" expand="block">
                             Change Organizations Roles

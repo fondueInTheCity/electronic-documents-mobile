@@ -27,6 +27,7 @@ export class Tab1Page implements OnDestroy {
             async (data) => {
                 await this.properties.endLoading();
                 this.tokenStorage.saveData(data.token, data.username, data.id);
+                this.tokenStorage.saveListId(data.organizationsId);
                 this.router.navigate(['/dashboard']);
             },
             async error => {

@@ -23,21 +23,35 @@ export class MyOrganizationsPage implements OnInit, OnDestroy {
         this.getOrganizations();
     }
 
-    async getOrganizations() {
+    async getOrganizations(event = null) {
         await this.properties.startLoading();
         this.properties.unsubscribe(this.getSubscription);
         this.getSubscription = this.userService.getOrganizationsInfo(this.tokenStorageService.getUsername())
             .subscribe(async (organizationsInfo) => {
                     await this.properties.endLoading();
                     this.organizationsInfo = organizationsInfo;
+                    if (event) {
+                        event.target.complete();
+                    }
                 },
                 async error => {
                     await this.properties.endLoading();
                     this.properties.getErrorAlertOpts(error);
+                    if (event) {
+                        event.target.complete();
+                    }
                 });
+    }
+
+    async doRefresh(event) {
+        this.getOrganizations(event);
     }
 
     ngOnDestroy(): void {
         this.properties.unsubscribe(this.getSubscription);
+    }
+
+    saveOrganizationId(id: number) {
+        this.properties.setCurrentOrganizationId(id);
     }
 }

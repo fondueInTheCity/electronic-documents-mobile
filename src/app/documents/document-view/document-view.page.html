@@ -1,9 +1,72 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>document-view</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>
+            <ion-icon (click)="back()" name="arrow-back-outline"></ion-icon>
+            Document View
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <form *ngIf="heapDocument" [formGroup]="heapForm" (ngSubmit)="onSubmitHeap()">
+        <ion-grid>
+            <ion-row>
+                <ion-col size-md="6" size-lg="5" size-xs="12">
+                    <ion-item>
+                        <ion-input type="text" formControlName="name" placeholder="Name" required readonly></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Roles</ion-label>
+                        <ion-select formControlName="roles" multiple="true">
+                            <ion-select-option *ngFor="let role of allRoles"
+                                               [value]="role.id">{{role.name}}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                    <div>
+                        <ion-button fill="outline" size="large" type="submit" expand="block">
+                            Create
+                        </ion-button>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+    <form *ngIf="waitingDocument" [formGroup]="waitingForm">
+        <ion-grid>
+            <ion-row>
+                <h1>In Waiting</h1>
+                <ion-col size-md="6" size-lg="5" size-xs="12">
+                    <ion-item>
+                        <ion-input type="text" formControlName="name" placeholder="Name" required readonly></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-input type="text" formControlName="organizationName" placeholder="Organization Name"
+                                   required readonly></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-input type="text" formControlName="count" placeholder="Count" required
+                                   readonly></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+    <ion-grid *ngIf="joinToMeDocument">
+        <ion-row>
+            <ion-col size-md="6" size-lg="5" size-xs="12">
+                <h1>Join To Me</h1>
+                <ion-item>
+                    <ion-button (click)="downloadFile()">Download File</ion-button>
+                </ion-item>
+                <ion-item *ngIf="downloaded">
+                    <ion-button fill="outline" size="large" expand="block" (click)="onSubmitJoinToMe(false)">Deny
+                    </ion-button>
+                </ion-item>
+                <ion-item *ngIf="downloaded">
+                    <ion-button fill="outline" size="large" expand="block" (click)="onSubmitJoinToMe(true)">Approve
+                    </ion-button>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

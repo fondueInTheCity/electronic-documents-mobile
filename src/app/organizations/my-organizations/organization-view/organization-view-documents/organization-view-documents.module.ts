@@ -7,17 +7,20 @@ import {IonicModule} from '@ionic/angular';
 import {OrganizationViewDocumentsPageRoutingModule} from './organization-view-documents-routing.module';
 
 import {OrganizationViewDocumentsPage} from './organization-view-documents.page';
-import {FTP} from '@ionic-native/ftp/ngx';
+import {DocumentViewPageModule} from '../../../../documents/document-view/document-view.module';
+import {DocumentViewPage} from '../../../../documents/document-view/document-view.page';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        OrganizationViewDocumentsPageRoutingModule
+        OrganizationViewDocumentsPageRoutingModule,
+        DocumentViewPageModule
     ],
-    providers: [FTP],
-    declarations: [OrganizationViewDocumentsPage]
+    providers: [],
+    declarations: [OrganizationViewDocumentsPage],
+    entryComponents: [DocumentViewPage]
 })
 export class OrganizationViewDocumentsPageModule {
 }

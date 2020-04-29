@@ -8,10 +8,16 @@
 </ion-header>
 
 <ion-content>
-    <ion-virtual-scroll [items]="organizationsInfo" >
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+    <ion-virtual-scroll [items]="organizationsInfo">
         <ion-card *virtualItem="let item;">
             <ion-card-header>
-                <ion-img src="https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"></ion-img>
+                <ion-img
+                        style="height: 160px !important; border-radius: 50% !important; width: 160px !important;"
+                        src="https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"></ion-img>
             </ion-card-header>
             <ion-card-content>
                 <ion-item-group>
@@ -24,7 +30,7 @@
                     <ion-item>
                         <ion-label>Organization Type: {{item?.type}}</ion-label>
                     </ion-item>
-                    <ion-item [routerLink]="['./', item.id]" slot="end">
+                    <ion-item (click)="saveOrganizationId(item.id)" [routerLink]="['./', item.id]" slot="end">
                         <ion-label>
                             <a>To Organization view</a>
                         </ion-label>

@@ -12,4 +12,14 @@ ion-content {
     --border-color: #66FCF1;
     --color: #66FCF1;
   }
+
+  ion-item-group {
+    width: 100%;
+
+    ion-label {
+      color: -webkit-link;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import {UserDashboard} from '../models/user/UserDashboard';
 import {environment} from '../../environments/environment.prod';
 import {OrganizationInfo} from '../models/organization/organization-info';
 import {OrganizationOffer} from '../models/organization/organization-offer';
+import {UserRequestsView} from '../models/user/user-requests-view';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,11 @@ export class UserService {
         return this.http.get<OrganizationInfo[]>(`${environment.serverUrl}/users/${username}/organizations`);
     }
 
-    getOrganizationsOffers(username: string): Observable<OrganizationOffer[]> {
-        return this.http.get<OrganizationOffer[]>(`${environment.serverUrl}/users/${username}/offers`);
+    getOrganizationsOffers(username: string): Observable<UserRequestsView> {
+        return this.http.get<UserRequestsView>(`${environment.serverUrl}/users/${username}/offers`);
+    }
+
+    checkPermissions(organizationId: number): Observable<void> {
+        return this.http.get<void>(`${environment.serverUrl}/users/${organizationId}`);
     }
 }

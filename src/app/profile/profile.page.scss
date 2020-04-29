@@ -2,13 +2,16 @@ ion-header {
   --ion-toolbar-background: #1F2933;
   --ion-text-color: #C5C6C7;
 }
+
 ion-content {
   --background: #1F2933;
   --color: #C5C6C7;
 
-  form {
-    height: 100%;
+  ion-img {
 
+  }
+
+  form {
     display: flex;
     align-items: center;
 

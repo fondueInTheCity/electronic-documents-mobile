@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 const TOKEN_KEY = 'AuthToken';
 const USERNAME_KEY = 'AuthUsername';
 const AUTHORITIES_KEY = 'AuthAuthorities';
 const ID_KEY = 'AuthId';
+const LIST = 'list';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class TokenStorageService {
     private roles: Array<string> = [];
@@ -22,6 +23,14 @@ export class TokenStorageService {
         this.saveToken(token);
         this.saveUsername(username);
         this.saveId(id);
+    }
+
+    public clearData() {
+        window.sessionStorage.removeItem(TOKEN_KEY);
+        window.sessionStorage.removeItem(USERNAME_KEY);
+        window.sessionStorage.removeItem(AUTHORITIES_KEY);
+        window.sessionStorage.removeItem(ID_KEY);
+        window.sessionStorage.removeItem(LIST);
     }
 
     public saveToken(token: string) {
@@ -73,5 +82,23 @@ export class TokenStorageService {
         const username = this.getUsername();
 
         return token && token !== '' && username && username !== '';
+    }
+
+    saveListId(organizationsId: number[]) {
+        window.sessionStorage.removeItem(LIST);
+        window.sessionStorage.setItem(LIST, JSON.stringify(organizationsId));
+    }
+
+    addNewOrganizationId(organizationId: number) {
+        const list: number[] = JSON.parse(sessionStorage.getItem(LIST));
+        list.push(organizationId);
+        this.saveListId(list);
+    }
+
+    hasPermissions(organizationId: number) {
+        if (sessionStorage.getItem(LIST)) {
+            return JSON.parse(sessionStorage.getItem(LIST)).findIndex(val => val === organizationId) >= 0;
+        }
+        return false;
     }
 }
