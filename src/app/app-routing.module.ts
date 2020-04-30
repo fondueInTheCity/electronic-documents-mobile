@@ -1,6 +1,8 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from './guards/auth.guard';
+import {SQLite} from '@ionic-native/sqlite/ngx';
+import {SQLitePorter} from '@ionic-native/sqlite-porter/ngx';
 
 const routes: Routes = [
     {
@@ -32,13 +34,25 @@ const routes: Routes = [
         redirectTo: 'dashboard',
         pathMatch: 'prefix'
     },
+    {
+        path: 'home',
+        loadChildren: () => import('./storage/storage.module').then(m => m.StoragePageModule)
+    },
+    {
+        path: 'home/:folder',
+        loadChildren: () => import('./storage/storage.module').then(m => m.StoragePageModule)
+    }
 ];
 
 @NgModule({
     imports: [
         RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules})
     ],
-    exports: [RouterModule]
+    exports: [RouterModule],
+    providers: [
+        SQLite,
+        SQLitePorter
+    ]
 })
 export class AppRoutingModule {
 }

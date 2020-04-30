@@ -47,9 +47,11 @@ export class DocumentService {
         return this.http.get<HeapDocumentView>(`${environment.serverUrl}/documents/${documentId}/heap`);
     }
 
-    // downloadDocument(documentId: number): Observable<File> {
-    //     return this.http.get<UserDocumentsInfo>(`${environment.serverUrl}/documents/user/${userId}`);
-    // }
+    downloadDocument(documentId: number): Observable<Blob> {
+        return this.http.post<Blob>(`${environment.serverUrl}/documents/user/${documentId}`, {},
+            {responseType: 'blob' as 'json'});
+    }
+
     approveUserHeapDocument(value: HeapDocumentView): Observable<void> {
         return this.http.post<void>(`${environment.serverUrl}/documents/${value.id}/heap`, value);
     }
@@ -62,8 +64,8 @@ export class DocumentService {
         return this.http.get<JoinToMeDocumentView>(`${environment.serverUrl}/documents/${documentId}/join-to-me`);
     }
 
-    downloadDocumentForCheck(documentId: number): Observable<void> {
-        return this.http.post<void>(`${environment.serverUrl}/documents/${documentId}/join-to-me/download`, {});
+    downloadDocumentForCheck(documentId: number): Observable<any> {
+        return this.http.post<any>(`${environment.serverUrl}/documents/${documentId}/join-to-me/download`, {}, { responseType: 'blob' as 'json' });
     }
 
     sendAnswer(documentId: number, answer: DocumentAnswer): Observable<void> {

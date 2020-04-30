@@ -3,8 +3,8 @@
         <ion-refresher-content>
         </ion-refresher-content>
     </ion-refresher>
-    <ion-progress-bar *ngIf="progress" value="{{progress}}"></ion-progress-bar>
-
+    <progress-bar *ngIf="uploadInProgress" [progress]="progress" [color]="'#488aff'">
+    </progress-bar>
     <ion-item>
         <label for="file-upload" class="custom-file-upload">
             Custom Upload
@@ -23,7 +23,7 @@
                 </ion-item>
                 <ion-item>
                     <ion-virtual-scroll [items]="filesInfo[info.documentsName]">
-                        <ion-item (click)="presentDocumentModal(item.id)" *virtualItem="let item;">
+                        <ion-item (click)="presentDocumentModal(item.id, item.documentState)" *virtualItem="let item;">
                             <ion-label>{{item.name}}</ion-label>
                         </ion-item>
                     </ion-virtual-scroll>

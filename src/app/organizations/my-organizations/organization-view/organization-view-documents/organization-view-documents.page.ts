@@ -26,6 +26,7 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
     approveDenySubscription: Subscription;
     organizationId: number;
     client: any;
+    uploadInProgress = false;
 
     selectedFiles: FileList;
     currentFile: File;
@@ -80,19 +81,22 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
 
     async upload() {
         this.progress = 0;
+        this.uploadInProgress = true;
         this.currentFile = this.selectedFiles.item(0);
         this.properties.unsubscribe(this.uploadSubscription);
         this.documentsService.upload(this.currentFile, this.organizationId, this.userId).subscribe(
             event => {
                 if (event.type === HttpEventType.UploadProgress) {
-                    this.progress = Math.round(event.loaded / event.total);
+                    this.progress = Math.round(event.loaded * 100 / event.total);
                 } else if (event instanceof HttpResponse) {
                     this.progress = 0;
+                    this.uploadInProgress = false;
                     this.getFiles();
                 }
             },
             err => {
                 this.progress = 0;
+                this.uploadInProgress = false;
                 this.message = 'Could not upload the file!';
                 this.currentFile = undefined;
             });
@@ -118,105 +122,16 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
             );
     }
 
-    async clickFun(item: DocumentInfo) {
-        switch (item.documentState) {
-            case 'HEAP':
-                await this.presentAlertPrompt(item);
-                break;
-            case 'WAITING':
-                this.changeDocumentState(item, 'PENDING');
-                break;
-            case 'PENDING':
-                this.approveDenyDocumentAlert(item);
-                break;
-            case 'ANSWERED':
-                break;
-        }
-    }
-
-    async presentAlertPrompt(item: DocumentInfo) {
-        const alert = await this.alertController.create({
-            header: 'Approve Heap File!',
-            inputs: [
-                {
-                    name: 'name',
-                    type: 'text',
-                    placeholder: 'File Name',
-                    value: item.name
-                }
-            ],
-            buttons: [
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    cssClass: 'secondary',
-                    handler: () => {
-                    }
-                }, {
-                    text: 'Ok',
-                    handler: () => {
-                        this.properties.unsubscribe(this.changeSubscription);
-                        this.changeSubscription = this.organizationService.changeDocumentState(item.id, 'WAITING')
-                            .subscribe(() => this.getFiles());
-                    }
-                }
-            ]
-        });
-
-        await alert.present();
-    }
-
-    async approveDenyDocumentAlert(item: DocumentInfo) {
-        const alert = await this.alertController.create({
-            header: 'Error',
-            message: `Approve document?`,
-            buttons: [
-                {
-                    text: 'Approve',
-                    handler: () => this.approveDenyDocument(true, item.id)
-                },
-                {
-                    text: 'Deny',
-                    handler: () => this.approveDenyDocument(false, item.id)
-                }]
-        });
-        await alert.present();
-    }
-
-    async approveDenyDocument(answer: boolean, documentId: number) {
-        await this.properties.startLoading();
-        this.properties.unsubscribe(this.approveDenySubscription);
-        this.approveDenySubscription = this.organizationService.approveDenyDocument(documentId, answer)
-            .subscribe(async () => {
-                    await this.properties.endLoading();
-                    this.getFiles();
-                }, async error => {
-                    await this.properties.endLoading();
-                }
-            );
-    }
-
-    changeDocumentState(item: DocumentInfo, to: string) {
-        this.organizationService.changeDocumentState(item.id, to).subscribe(() => this.getFiles());
-    }
-
-    async ftpAlert(messages: string) {
-        const alert = await this.alertController.create({
-            header: 'Error',
-            message: messages,
-        });
-        await alert.present();
-    }
-
     async doRefresh(event) {
         this.getFiles(event);
     }
 
-    async presentDocumentModal(documentId: number) {
+    async presentDocumentModal(documentId: number, state: string) {
         const modal = await this.modalController.create({
             component: DocumentViewPage,
             componentProps: {
-                documentId
+                documentId,
+                state
             }
         });
         return await modal.present();

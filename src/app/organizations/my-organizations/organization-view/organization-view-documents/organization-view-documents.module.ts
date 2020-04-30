@@ -9,6 +9,7 @@ import {OrganizationViewDocumentsPageRoutingModule} from './organization-view-do
 import {OrganizationViewDocumentsPage} from './organization-view-documents.page';
 import {DocumentViewPageModule} from '../../../../documents/document-view/document-view.module';
 import {DocumentViewPage} from '../../../../documents/document-view/document-view.page';
+import {ProgressBarModule} from 'angular-progress-bar';
 
 @NgModule({
     imports: [
@@ -16,7 +17,8 @@ import {DocumentViewPage} from '../../../../documents/document-view/document-vie
         FormsModule,
         IonicModule,
         OrganizationViewDocumentsPageRoutingModule,
-        DocumentViewPageModule
+        DocumentViewPageModule,
+        ProgressBarModule
     ],
     providers: [],
     declarations: [OrganizationViewDocumentsPage],

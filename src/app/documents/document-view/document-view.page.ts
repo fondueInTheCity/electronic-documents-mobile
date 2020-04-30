@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ModalController} from '@ionic/angular';
+import {AlertController, ModalController, Platform, ToastController} from '@ionic/angular';
 import {PropertiesService} from '../../services/properties.service';
 import {FormBuilder} from '@angular/forms';
 import {OrganizationService} from '../../services/organization.service';
@@ -8,6 +8,9 @@ import {HeapDocumentView} from '../../models/documents/heap-document-view';
 import {OrganizationRoleInfo} from '../../models/organization/organization-role-info';
 import {WaitingDocumentView} from '../../models/documents/waiting-document-view';
 import {JoinToMeDocumentView} from '../../models/documents/join-to-me-document-view';
+import {File} from '@ionic-native/file/ngx';
+import {FileOpener} from '@ionic-native/file-opener/ngx';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
     selector: 'app-document-view',
@@ -45,7 +48,14 @@ export class DocumentViewPage implements OnInit {
                 private properties: PropertiesService,
                 private fb: FormBuilder,
                 private organizationService: OrganizationService,
-                private documentService: DocumentService) {
+                private documentService: DocumentService,
+                private file: File,
+                private plt: Platform,
+                private alertCtrl: AlertController,
+                private fileOpener: FileOpener,
+                private router: Router,
+                private route: ActivatedRoute,
+                private toastCtrl: ToastController) {
     }
 
     async ngOnInit() {
@@ -81,12 +91,49 @@ export class DocumentViewPage implements OnInit {
     }
 
     downloadFile() {
-        this.documentService.downloadDocumentForCheck(this.documentId).subscribe(() => {
-            this.downloaded = true;
-        });
+        this.documentService.downloadDocumentForCheck(this.documentId).subscribe((file: any) =>
+            this.createFile(file)
+        );
     }
 
     onSubmitJoinToMe(answer: boolean) {
         this.documentService.sendAnswer(this.documentId, {answer}).subscribe();
+    }
+
+    async createFile(blob: Blob) {
+        const alert = await this.alertCtrl.create({
+            header: 'Create file',
+            message: 'Please specify the name of the new file',
+            inputs: [
+                {
+                    name: 'name',
+                    type: 'text',
+                    placeholder: 'MyFile'
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary'
+                },
+                {
+                    text: 'Create',
+                    handler: data => {
+                        this.file
+                            .writeFile(
+                                `${this.file.dataDirectory}`,
+                                `${data.name}.pdf`,
+                                blob
+                            )
+                            .then(res => {
+                                console.log(res);
+                            });
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
     }
 }
