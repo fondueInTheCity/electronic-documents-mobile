@@ -7,8 +7,8 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <form *ngIf="heapDocument" [formGroup]="heapForm" (ngSubmit)="onSubmitHeap()">
+<ion-content *ngIf="show">
+    <form *ngIf="state === 'HEAP'" [formGroup]="heapForm" (ngSubmit)="onSubmitHeap()">
         <ion-grid>
             <ion-row>
                 <ion-col size-md="6" size-lg="5" size-xs="12">
@@ -31,7 +31,7 @@
             </ion-row>
         </ion-grid>
     </form>
-    <form *ngIf="waitingDocument" [formGroup]="waitingForm">
+    <form *ngIf="state === 'WAITING'" [formGroup]="waitingForm">
         <ion-grid>
             <ion-row>
                 <h1>In Waiting</h1>
@@ -51,12 +51,36 @@
             </ion-row>
         </ion-grid>
     </form>
-    <ion-grid *ngIf="joinToMeDocument">
+    <ion-grid *ngIf="state === 'PENDING'">
+        <ion-row>
+            <h1>In Progress</h1>
+            <ion-col size-md="6" size-lg="5" size-xs="12">
+                <ion-item>
+                    <ion-label>Document Name: {{pendingDocumentView.name}}</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-label>Organization Name: {{pendingDocumentView.organizationName}}</ion-label>
+                </ion-item>
+                <ion-item>
+                   <ion-label>Answers count: {{this.countAnswered}}</ion-label>
+                </ion-item>
+                <ion-list>
+                    <ion-item *ngFor="let answer of pendingDocumentView.answers">
+                        <ion-label>{{answer.username}}:  {{answer.answer}}</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="state === 'JOIN_TO_ME'">
         <ion-row>
             <ion-col size-md="6" size-lg="5" size-xs="12">
                 <h1>Join To Me</h1>
                 <ion-item>
-                    <ion-button (click)="downloadFile()">Download File</ion-button>
+                    <ion-button *ngIf="!downloaded" (click)="downloadFile()">Download File</ion-button>
+                </ion-item>
+                <ion-item>
+                    <ion-button *ngIf="downloaded" (click)="openFile()">Open File</ion-button>
                 </ion-item>
                 <ion-item *ngIf="downloaded">
                     <ion-button fill="outline" size="large" expand="block" (click)="onSubmitJoinToMe(false)">Deny
@@ -66,6 +90,27 @@
                     <ion-button fill="outline" size="large" expand="block" (click)="onSubmitJoinToMe(true)">Approve
                     </ion-button>
                 </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="state === 'ANSWERED'">
+        <ion-row>
+            <h1>In Progress</h1>
+            <ion-col size-md="6" size-lg="5" size-xs="12">
+                <ion-item>
+                    <ion-label>Document Name: {{answeredDocument.name}}</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-label>Organization Name: {{answeredDocument.organizationName}}</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-label>Answers count: {{this.countAnswered}}</ion-label>
+                </ion-item>
+                <ion-list>
+                    <ion-item *ngFor="let username of answeredDocument.joins">
+                        <ion-label>{{username}}</ion-label>
+                    </ion-item>
+                </ion-list>
             </ion-col>
         </ion-row>
     </ion-grid>

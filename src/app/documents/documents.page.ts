@@ -37,7 +37,7 @@ export class DocumentsPage implements OnInit, OnDestroy {
         },
         {
             header: 'Join To Me',
-            documentsName: 'joinToMe'
+            documentsName: 'joinToMeDocuments'
         },
         {
             header: 'Answered',

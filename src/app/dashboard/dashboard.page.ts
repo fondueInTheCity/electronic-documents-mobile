@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import { File, Entry } from '@ionic-native/file/ngx';
+import {Entry} from '@ionic-native/file/ngx';
 import {TokenStorageService} from '../auth/services/token-storage.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AlertController, Platform, ToastController} from '@ionic/angular';
-import {FileOpener} from '@ionic-native/file-opener/ngx';
+import {Router} from '@angular/router';
 import {DbService} from '../services/db.service';
+import {PropertiesService} from '../services/properties.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -17,24 +16,15 @@ export class DashboardPage implements OnInit {
     folder = '';
     copyFile: Entry = null;
     shouldMove = false;
-    data: any;
 
 
     constructor(private tokenStorageService: TokenStorageService,
                 private router: Router,
-                private db: DbService,
-                private properties: PropertiesServices) {
+                private properties: PropertiesService) {
     }
 
     ngOnInit() {
         this.currentUsername = this.tokenStorageService.getUsername();
-        this.db.dbState().subscribe((res) => {
-            if (res) {
-                this.db.fetchSongs().subscribe(item => {
-                    this.data = item;
-                });
-            }
-        });
     }
 
     logout() {

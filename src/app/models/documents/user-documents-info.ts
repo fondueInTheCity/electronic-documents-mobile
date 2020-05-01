@@ -5,5 +5,5 @@ export class UserDocumentsInfo {
     waitingDocuments: DocumentInfo[];
     progressDocuments: DocumentInfo[];
     answeredDocuments: DocumentInfo[];
-    joinToMe: DocumentInfo[];
+    joinToMeDocuments: DocumentInfo[];
 }

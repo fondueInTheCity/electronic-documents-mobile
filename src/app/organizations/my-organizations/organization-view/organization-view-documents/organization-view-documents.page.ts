@@ -54,6 +54,10 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
             documentsName: 'progressDocuments'
         },
         {
+            header: 'Join To Me',
+            documentsName: 'joinToMeDocuments'
+        },
+        {
             header: 'Answered',
             documentsName: 'answeredDocuments'
         }
@@ -84,8 +88,7 @@ export class OrganizationViewDocumentsPage implements OnInit, OnDestroy {
         this.uploadInProgress = true;
         this.currentFile = this.selectedFiles.item(0);
         this.properties.unsubscribe(this.uploadSubscription);
-        this.documentsService.upload(this.currentFile, this.organizationId, this.userId).subscribe(
-            event => {
+        this.documentsService.upload(this.currentFile, this.organizationId, this.userId).subscribe((event) => {
                 if (event.type === HttpEventType.UploadProgress) {
                     this.progress = Math.round(event.loaded * 100 / event.total);
                 } else if (event instanceof HttpResponse) {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {OrganizationDocumentsInfo} from '../models/documents/organization-documents-info';
@@ -9,13 +9,16 @@ import {HeapDocumentView} from '../models/documents/heap-document-view';
 import {WaitingDocumentView} from '../models/documents/waiting-document-view';
 import {JoinToMeDocumentView} from '../models/documents/join-to-me-document-view';
 import {DocumentAnswer} from '../models/documents/document-answer';
+import {AnsweredDocumentView} from '../models/documents/answered-document-view';
+import {PendingDocumentView} from '../models/documents/pending-document-view';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DocumentService {
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {
+    }
 
     getMyOrganizationDocumentsInfo(organizationId: number, userId: number): Observable<OrganizationDocumentsInfo> {
         return this.http.get<OrganizationDocumentsInfo>(`${environment.serverUrl}/documents/organization/${organizationId}/user/${userId}`);
@@ -65,10 +68,19 @@ export class DocumentService {
     }
 
     downloadDocumentForCheck(documentId: number): Observable<any> {
-        return this.http.post<any>(`${environment.serverUrl}/documents/${documentId}/join-to-me/download`, {}, { responseType: 'blob' as 'json' });
+        return this.http.post<any>(`${environment.serverUrl}/documents/${documentId}/join-to-me/download`, {},
+            {reportProgress: true, responseType: 'blob' as 'json'});
     }
 
     sendAnswer(documentId: number, answer: DocumentAnswer): Observable<void> {
         return this.http.post<void>(`${environment.serverUrl}/documents/${documentId}/join-to-me/answer`, answer);
+    }
+
+    getAnsweredDocument(documentId: number): Observable<AnsweredDocumentView> {
+        return this.http.get<AnsweredDocumentView>(`${environment.serverUrl}/documents/${documentId}/answered`);
+    }
+
+    getPendingDocument(documentId: number): Observable<PendingDocumentView> {
+        return this.http.get<PendingDocumentView>(`${environment.serverUrl}/documents/${documentId}/progress`);
     }
 }

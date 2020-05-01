@@ -7,12 +7,14 @@ import {IonicModule} from '@ionic/angular';
 import {DocumentViewPage} from './document-view.page';
 import {File} from '@ionic-native/file/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
+import {ProgressBarModule} from 'angular-progress-bar';
 
 @NgModule({
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        IonicModule
+        IonicModule,
+        ProgressBarModule
     ],
     declarations: [DocumentViewPage],
     exports: [DocumentViewPage],

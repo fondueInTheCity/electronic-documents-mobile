@@ -6,6 +6,7 @@ import {SQLite} from '@ionic-native/sqlite/ngx';
 import {HttpClient} from '@angular/common/http';
 import {SQLitePorter} from '@ionic-native/sqlite-porter/ngx';
 import {LocalUser} from '../models/user/local-user';
+import {PropertiesService} from './properties.service';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,8 @@ export class DbService {
     constructor(private platform: Platform,
                 private sqlite: SQLite,
                 private httpClient: HttpClient,
-                private sqlPorter: SQLitePorter) {
+                private sqlPorter: SQLitePorter,
+                private properties: PropertiesService) {
         this.platform.ready().then(() => {
             this.sqlite.create({
                 name: 'electronic_documents_local.db',
@@ -27,6 +29,8 @@ export class DbService {
             }).then((db: SQLiteObject) => {
                 this.storage = db;
                 this.createTables();
+            }).catch(error => {
+                this.properties.getErrorAlertOpts(error);
             });
         });
     }
@@ -45,7 +49,7 @@ export class DbService {
             this.sqlPorter.importSqlToDb(this.storage, data).then(_ => {
                 this.getSongs();
                 this.isDbReady.next(true);
-            }).catch(error => console.error(error));
+            }).catch(error => this.properties.getErrorAlertOpts(error));
         });
     }
 
@@ -64,7 +68,7 @@ export class DbService {
                 }
             }
             this.localUsers.next(items);
-        });
+        }).catch(error => this.properties.getErrorAlertOpts(error));
     }
 
     // Add

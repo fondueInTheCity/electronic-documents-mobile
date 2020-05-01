@@ -3,6 +3,7 @@ import { Entry, File } from '@ionic-native/file/ngx';
 import {AlertController, Platform, ToastController} from '@ionic/angular';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {ActivatedRoute, Router} from '@angular/router';
+import {PropertiesService} from '../services/properties.service';
 
 @Component({
   selector: 'app-storage',
@@ -22,7 +23,8 @@ export class StoragePage implements OnInit {
         private fileOpener: FileOpener,
         private router: Router,
         private route: ActivatedRoute,
-        private toastCtrl: ToastController
+        private toastCtrl: ToastController,
+        private properties: PropertiesService
     ) {}
 
     ngOnInit() {
@@ -35,7 +37,6 @@ export class StoragePage implements OnInit {
             // Reset for later copy/move operations
             this.copyFile = null;
             this.shouldMove = false;
-
             this.file.listDir(this.file.dataDirectory, this.folder).then(res => {
                 this.directories = res;
             });
@@ -129,6 +130,7 @@ export class StoragePage implements OnInit {
     }
 
     async itemClicked(file: Entry) {
+        await this.properties.startAlert(this.properties.getErrorAlertOpts(file.nativeURL));
         if (this.copyFile) {
             // Copy is in action!
             if (!file.isDirectory) {
